@@ -81,6 +81,20 @@ fun Application.module(testing: Boolean = false) {
             call.respondText("Counter is ${session.count}. Refresh to increment.")
         }
 
+        route("/login") {
+            get {
+                call.respond(FreeMarkerContent("login.ftl", null))
+            }
+            post {
+                val post = call.receiveParameters()
+                if (post["username"] != null && post["username"] == post["password"]) {
+                    call.respondText("OK")
+                } else {
+                    call.respond(FreeMarkerContent("login.ftl", mapOf("error" to "Invalid login")))
+                }
+            }
+        }
+
         install(StatusPages) {
             exception<AuthenticationException> { cause ->
                 call.respond(HttpStatusCode.Unauthorized)
